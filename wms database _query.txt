@@ -1,0 +1,77 @@
+CREATE TABLE item_categories
+(
+  barcode VARCHAR NOT NULL,
+  item_uuid VARCHAR NOT NULL,
+  name VARCHAR NOT NULL,
+  sell_price FLOAT,
+  buy_price FLOAT,
+  description VARCHAR NOT NULL,
+  PRIMARY KEY (item_uuid),
+  UNIQUE (barcode)
+);
+
+CREATE TABLE supplier
+(
+  name VARCHAR NOT NULL,
+  supplier_uuid VARCHAR NOT NULL,
+  phone_no VARCHAR,
+  address VARCHAR,
+  description VARCHAR,
+  PRIMARY KEY (supplier_uuid)
+);
+
+CREATE TABLE customer
+(
+  name VARCHAR NOT NULL,
+  customer_uuid VARCHAR NOT NULL,
+  phone_no VARCHAR,
+  address VARCHAR,
+  description VARCHAR,
+  PRIMARY KEY (customer_uuid)
+);
+
+CREATE TABLE incomming_order
+(
+  status VARCHAR NOT NULL,
+  incoming_order_uuid VARCHAR NOT NULL,
+  incoming_order_id VARCHAR NOT NULL,
+  entry_date DATE NOT NULL,
+  total_paid FLOAT,
+  supplier_uuid VARCHAR NOT NULL,
+  employee_supervisor_uuid VARCHAR NOT NULL,
+  PRIMARY KEY (incoming_order_uuid),
+  FOREIGN KEY (supplier_uuid) REFERENCES supplier(supplier_uuid),
+  FOREIGN KEY (employee_supervisor_uuid) REFERENCES employee_supervisor(employee_supervisor_uuid),
+  UNIQUE (incoming_order_id)
+);
+
+CREATE TABLE outgoing_order
+(
+  status VARCHAR NOT NULL,
+  outgoing_order_uuid VARCHAR NOT NULL,
+  outgoing_order_id VARCHAR NOT NULL,
+  out_date DATE NOT NULL,
+  profit FLOAT,
+  customer_uuid VARCHAR NOT NULL,
+  employee_supervisor_uuid VARCHAR NOT NULL,
+  PRIMARY KEY (outgoing_order_uuid),
+  FOREIGN KEY (customer_uuid) REFERENCES customer(customer_uuid),
+  FOREIGN KEY (employee_supervisor_uuid) REFERENCES employee_supervisor(employee_supervisor_uuid),
+  UNIQUE (outgoing_order_id)
+);
+
+CREATE TABLE physical_item
+(
+  entry_date DATE NOT NULL,
+  shelf_life INT NOT NULL,
+  contain_no INT NOT NULL,
+  item_type VARCHAR NOT NULL,
+  item_barcode VARCHAR NOT NULL,
+  item_uuid VARCHAR NOT NULL,
+  incoming_order_uuid VARCHAR NOT NULL,
+  outgoing_order_uuid VARCHAR NOT NULL,
+  PRIMARY KEY (item_barcode),
+  FOREIGN KEY (item_uuid) REFERENCES item_categories(item_uuid),
+  FOREIGN KEY (incoming_order_uuid) REFERENCES incomming_order(incoming_order_uuid),
+  FOREIGN KEY (outgoing_order_uuid) REFERENCES outgoing_order(outgoing_order_uuid)
+);
