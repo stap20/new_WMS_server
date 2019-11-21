@@ -32,7 +32,8 @@ function queryGenerator(
   query_table,
   values_list,
   condition,
-  modifiers
+  modifiers,
+  join_json
 ) {
   var sql = jsonSql.build({
     type: query_type,
@@ -40,7 +41,8 @@ function queryGenerator(
     fields: Object.keys(values_list),
     values: values_list,
     condition: condition,
-    modifier: modifiers
+    modifier: modifiers,
+    join:[join_json]
   });
 
   query = {
@@ -108,6 +110,17 @@ const quiries = {
             return true;     
         else 
             return false;
+    } 
+    catch (error) {return error;}
+  },
+
+  async join_query(main_table,values,join_type,joined_table,join_condition) {
+    try {
+        const res = await client.query(queryGenerator("select",main_table,values,{},{},{type:join_type,table:joined_table,on:join_condition}));
+        if (res.rowCount > 0)
+            return res.rows;     
+        else 
+            return null;
     } 
     catch (error) {return error;}
   },

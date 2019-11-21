@@ -1,7 +1,7 @@
 const utils = require("./utils");
 
 async function login(response) {
-  table_name = "employee_account";
+  const table_name = "employee_account";
   // check if user exist data in data base
   var login_res = await utils.user_utils.getuserData(response.email, response.password);
   if (login_res.name === "error") {

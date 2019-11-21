@@ -2,19 +2,19 @@ const db = require("../server/quiries");
 const vl = require("../server/validation");
 const user_utils = {
   async getuserData(email, password = "") {
-    table_name = "employee_account";
+    const table_name = "employee_account";
     condition = { email: email };
 
     // check if user exist data in data base
-    check_get_user_query = null;
-    get_user_query = await db.quiries.getData(table_name, {}, condition);
+    check_get_employee_query = null;
+    get_employee_query = await db.quiries.getData(table_name, {}, condition);
     if (password !== "") {
-      check_get_user_query = vl.validation.comparePassword(
-        get_user_query.password,
+      check_get_employee_query = vl.validation.comparePassword(
+        get_employee_query.password,
         password
       );
     }
-    if (get_user_query === null && check_get_user_query === null) {
+    if (get_employee_query === null && check_get_employee_query === null) {
       return {
         result: null,
         details: {
@@ -23,14 +23,14 @@ const user_utils = {
           errors: ["invalid username or password"]
         }
       };
-    } else if (get_user_query && check_get_user_query && password !== "") {
+    } else if (get_employee_query && check_get_employee_query && password !== "") {
       return {
-        result: get_user_query,
+        result: get_employee_query,
         details: {}
       };
-    } else if (get_user_query && password === "") {
+    } else if (get_employee_query && password === "") {
       return {
-        result: get_user_query,
+        result: get_employee_query,
         details: {}
       };
     }

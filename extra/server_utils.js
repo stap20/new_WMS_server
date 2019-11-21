@@ -1,8 +1,8 @@
 var randomize = require("randomatic");
-fs = require("fs");
-PDFDocument = require("pdfkit");
-SVGtoPDF = require("svg-to-pdfkit");
-qr = require("qr-image");
+var fs = require("fs");
+var PDFDocument = require("pdfkit");
+var SVGtoPDF = require("svg-to-pdfkit");
+var qr = require("qr-image");
 
 PDFDocument.prototype.addSVG = function(svg, x, y, options) {
   return SVGtoPDF(this, svg, x, y, options), this;

@@ -2,7 +2,7 @@ const db = require("../server/quiries");
 const server_utils = require("../extra/server_utils");
 const vl = require("../server/validation");
 async function add_employeeAcc(response) {
-  table_name = "employee_account";
+  const table_name = "employee_account";
 
   // check login code already exist in database or not
   login_code = server_utils.serverUtils.generateLoginCode();

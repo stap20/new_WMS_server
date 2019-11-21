@@ -14,15 +14,29 @@ var addemployee_acc = require("../Employee/add_employee_acc");
 var add_worker = require("../workers/add_worker");
 var vl = require("./validation");
 const utils = require("../Employee/utils");
+
 const items_category_utils = require("../products/item_categories/item_utils");
 const additem_category = require("../products/item_categories/add_item");
 const getitem_category = require("../products/item_categories/search_item");
+const modifiItem_category = require("../products/item_categories/modifi_item");
+
 const additem_inventory = require("../products/item_inventory/add_item_inventory");
 const getitem_inventory = require("../products/item_inventory/search_item_inventory");
 const items_inventory_utils = require("../products/item_inventory/item_inventory_utils");
-const inputHandler = require("../extra/inputHandler");
-const modifiItem_category = require("../products/item_categories/modifi_item");
+
 const addsupplier = require("../supplier/add_supplier");
+const supplier_utils = require("../supplier/supplier_utils");
+
+const addcustomer = require("../customer/add_customer");
+const customer_utils = require("../customer/customer_utils");
+
+const addincoming_order = require("../order/incomming_order/addincoming_order")
+const incoming_order_utils = require("../order/incomming_order/incoming_order_utils")
+
+const addoutgoing_order = require("../order/outgoing_order/addoutgoing_order")
+const outgoing_order_utils = require("../order/outgoing_order/outgoing_order_utils")
+
+const inputHandler = require("../extra/inputHandler");
 const getEmp_kind = require("../extra/checkemp_kind");
 const server_utils = require("../extra/server_utils");
 
@@ -254,7 +268,65 @@ app.post("/getallitems_inventory", function(req, res) {
   });
 });
 
-//------------------------------ Items handler requests session --------------------------------
+//------------------------------ order handler requests session --------------------------------
+//------------- incomingorder handler requests session -------------
+//add new incoming order
+app.post("/addincoming_order", function(req, res) {
+  // Prepare output in JSON format
+  console.log("request addincoming_order recieved");
+  response = {
+    status: req.body.status,
+    incoming_order_uuid: "",
+    incoming_order_id: req.body.incoming_order_id,
+    entry_date: req.body.entry_date,
+    total_paid: req.body.total_paid,
+    supplier_uuid: req.body.supplier_uuid,
+    employee_supervisor_uuid: "35880958-b281-4409-913e-59c73e137abb",  //this uuid for supervisor will handle it later after handle login
+    expected_arrival_date: req.body.expected_arrival_date
+  };
+  addincoming_order.addincomingOrder(response).then(value => {
+    res.send(value);
+  });
+});
+
+//get all data all rows for incomming_orders
+app.post("/getallincoming_orders", function(req, res) {
+  console.log("request getallincoming_orders recieved");
+  incoming_order_utils.incomingOrder_utils.getallIncomingOrdersData().then(value => {
+    res.send(value);
+  });
+});
+
+//------------- outgoingorder handler requests session -------------
+//add new outgoing order
+app.post("/addoutgoing_order", function(req, res) {
+  // Prepare output in JSON format
+  console.log("request addoutgoing_order recieved");
+  response = {
+    status: req.body.status,
+    outgoing_order_uuid: "",
+    outgoing_order_id: req.body.incoming_order_id,
+    out_date: req.body.out_date,
+    revenue: req.body.revenue,
+    custome_uuid: req.body.custome_uuid,
+    employee_supervisor_uuid: "35880958-b281-4409-913e-59c73e137abb",  //this uuid for supervisor will handle it later after handle login
+    expected_departure_date: req.body.expected_departure_date
+  };
+  addoutgoing_order.addoutgoingOrder(response).then(value => {
+    res.send(value);
+  });
+});
+
+//get all data all rows for outgoing_orders
+app.post("/getalloutgoing_orders", function(req, res) {
+  console.log("request getalloutgoing_orders recieved");
+  outgoing_order_utils.outgoingOrder_utils.getallOutgoingOrdersData().then(value => {
+    res.send(value);
+  });
+});
+
+//--------------------------------------------------------------------------------------------------
+//------------- supplier handler requests session -------------
 //add new supplier
 app.post("/addsupplier", function(req, res) {
   // Prepare output in JSON format
@@ -271,10 +343,35 @@ app.post("/addsupplier", function(req, res) {
   });
 });
 
-//get all data all rows for users
+//get all data all rows for supplier
 app.post("/getallsuppliers", function(req, res) {
   console.log("request getallsuppliers recieved");
-  items_inventory_utils.inventoryUtils.getallSupplierData().then(value => {
+  supplier_utils.supplier_utils.getallSuppliersData().then(value => {
+    res.send(value);
+  });
+});
+
+//------------- customer handler requests session -------------
+//add new customer
+app.post("/addcustomer", function(req, res) {
+  // Prepare output in JSON format
+  console.log("request addcustomer recieved");
+  response = {
+    name: req.body.name,
+    customer_uuid: "",
+    phone_no: req.body.phone_no,
+    address: req.body.address,
+    description: req.body.description
+  };
+  addcustomer.addCustomer(response).then(value => {
+    res.send(value);
+  });
+});
+
+//get all data all rows for customer
+app.post("/getallcustomers", function(req, res) {
+  console.log("request getallcustomers recieved");
+  customer_utils.customer_utils.getallCustomersData().then(value => {
     res.send(value);
   });
 });

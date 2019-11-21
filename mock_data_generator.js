@@ -1,52 +1,44 @@
-/*var qr = require('qr-image');
+var jsonSql = require("json-sql")();
 
-var jspdf = require('jspdf')
- 
-var svg_string = qr.imageSync('I love QR!', { type: 'svg' });
-const svgElement = svg_string
+function fixQuery(query_text,target_remove = "$p") {
+  var idx = query_text.indexOf(target_remove);
+  var iterate = 0
+  while (idx >= 0 && iterate < query_text.length) {
+    first = query_text.substr(0, idx + 1);
+    last = query_text.substr(idx + 2, query_text.length - 1);
 
-const width = 300, height = 200;
- 
-// create a new jsPDF instance
-const pdf = jspdf('l', 'pt', [width, height]);
- 
-// render the svg element
-svg2pdf(svgElement, pdf, {
-    xOffset: 0,
-    yOffset: 0,
-    scale: 1
-});
- 
-// get the data URI
-const uri = pdf.output('datauristring');
- 
-// or simply save the created pdf
-pdf.save('myPDF.pdf');*/
+    query_text = first + last;
+    idx = query_text.indexOf(target_remove);
+    iterate++;
+  }
 
-fs = require('fs')
-PDFDocument = require('pdfkit')
-SVGtoPDF = require('svg-to-pdfkit');
+  return query_text;
+}
 
-PDFDocument.prototype.addSVG = function(svg, x, y, options) {
-  return SVGtoPDF(this, svg, x, y, options), this;
-};
+function queryGenerator(
+  query_type,
+  query_table,
+  values_list,
+  condition,
+  modifiers,
+  join_json
+) {
+  var sql = jsonSql.build({
+    type: query_type,
+    table: query_table,
+    fields: Object.keys(values_list),
+    values: values_list,
+    condition: condition,
+    modifier: modifiers,
+    join:[join_json]
+  });
 
-var doc = new PDFDocument(),
-stream = fs.createWriteStream('file.pdf'),
+  query = {
+    text: fixQuery(sql.query),
+    values: Object.values(sql.values)
+  };
+  return query;
+}
 
- qr = require('qr-image'); 
-var svg_string = qr.imageSync('I love QR!', { type: 'svg' });
-var svg_string2 = qr.imageSync('I losdklajskldjlkjasdlkjakjsdjlkasdve QR!', { type: 'svg' });
-const svgElement = svg_string
-const svgElement2 = svg_string2
-
-SVGtoPDF(doc, svgElement, 1, 0);
-doc.addPage()
-SVGtoPDF(doc, svgElement2, 0, 0);
-stream.on('finish', function() {
-  console.log(fs.readFileSync('file.pdf'))
-});
-
-doc.pipe(stream);
-doc.end();
-
+query=queryGenerator("select","order",{},{},{},{type:"inner",table:"customer",on:{'order.id':'customer.id'}})
+console.log(query.text)
